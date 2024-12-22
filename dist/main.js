@@ -1,15 +1,15 @@
 import { Space } from "./space.js";
 const canvas = document.querySelector("canvas");
-canvas.width = window.innerWidth * 1;
-canvas.height = window.innerHeight * 1;
+canvas.width = window.innerWidth * 10;
+canvas.height = window.innerHeight * 10;
 const ctx = canvas.getContext("2d");
 const space = new Space(ctx, canvas.width, canvas.height);
 let i = 0;
-function animate() {
-    i++;
-    space.update(space.translation);
-    requestAnimationFrame(animate);
-}
+// function animate() {
+//   i++;
+//   space.update(space.translation);
+//   requestAnimationFrame(animate);
+// }
 // animate();
 // This is a hack to make the cleanup function available to the server
 const cleanup = "__sserver_cleanup_main";
