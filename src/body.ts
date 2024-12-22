@@ -1,4 +1,4 @@
-import { BodyParams, Pos } from "./utils/types";
+import { BodyParams, Pos } from "./utils/types.js";
 
 class Body {
   rings: number = 0;

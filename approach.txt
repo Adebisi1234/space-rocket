@@ -1,0 +1,10 @@
+Ok, here's my approach
+
+- The rocket element is an svg, that just rotates
+- The space itself is also svg... because canvas seems too hard to work with right now and it's at least twice the innerwidth and fixed
+- Viewport this is an overlay on the space, it moves around, it's the size as the browser Viewport
+
+First let's get this set up.
+
+
+momentum when hitting celestial bodies
