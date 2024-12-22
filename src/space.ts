@@ -6,13 +6,12 @@ export class Space {
   private height: number = 0;
   private pos: Pos = { x: 0, y: 0 };
   public acceleration: Pos = { x: 0, y: 0 };
-  public velocity: Pos = { x: 0, y: 0 };
   private canvasPos: Pos;
+  public velocity: Pos = { x: 0, y: 0 };
   public friction = 0.99;
-  public gravity = 0.1;
   public thrust = 0.2;
   private isDragging = false;
-  private maxVelocity = 10;
+  private maxSpeed = 10;
   private maxCanvasPos: Pos;
   private minCanvasPos: Pos;
   private movement: Pos = { x: 0, y: 0 }; //Account for canvas translation
@@ -74,11 +73,9 @@ export class Space {
         this.canvasPos.x + e.movementX <= this.minCanvasPos.x ||
         this.canvasPos.x + e.movementX >= this.maxCanvasPos.x
       ) {
-        console.log("yojj");
         dx = 0;
       } else {
         dx = e.movementX;
-        this.movement.x += e.movementX;
       }
       if (
         this.canvasPos.y + e.movementY <= this.minCanvasPos.y ||
@@ -87,25 +84,28 @@ export class Space {
         dy = 0;
       } else {
         dy = e.movementY;
-        this.movement.y += e.movementY;
       }
-      console.log(this.minCanvasPos, this.canvasPos);
+
       this.canvasPos.x += dx;
       this.canvasPos.y += dy;
+      this.movement.x = dx;
+      this.movement.y += dy;
       this.ctx.translate(dx, dy);
       this.#generateGrid();
     });
   }
 
-  #translateSpace() {}
-
-  update(translation: Pos) {}
+  update() {}
 }
 
 // Next
 /* 
 - Limiting the space - done
-- movement acceleration, and friction
+- movement velocity, and friction
+  - thrust += hypot(e.movement)
+  - velocity *= thrust
+  - velocity -= friction
 
-how to proceed?
+- Bodies
+ - Different class...
 */
