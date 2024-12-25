@@ -1,12 +1,17 @@
 export class Rocket {
-    constructor() { }
+    // private trail: Stack
+    rocketEl;
+    constructor() {
+        this.rocketEl = document.querySelector("#rocket");
+    }
     #addEventListeners() { }
-    update() { }
+    update(angle) {
+        this.rocketEl.style.rotate = `${radToDegree(angle) + 90}deg`; // Taking into account the direction the angle is calculated in respect to..
+    }
 }
 function calcAngleDegrees(pos) {
     return (Math.atan2(pos.y, pos.x) * 180) / Math.PI;
 }
-/*
-this.x -= Math.sin(this.angle) * this.speed;
-    this.y -= Math.cos(this.angle) * this.speed;
-*/
+function radToDegree(angle) {
+    return (angle * 180) / Math.PI;
+}
