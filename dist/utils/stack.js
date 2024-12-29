@@ -1,9 +1,11 @@
 export class Stack {
     size;
     inputs;
-    constructor(size, ...inputs) {
+    constructor(size, inputs) {
         this.size = size;
-        this.inputs = [...inputs];
+        this.inputs = inputs
+            ? [...inputs]
+            : [{ x: innerWidth / 2, y: innerHeight / 2 }];
     }
     push(pos) {
         if (this.inputs.length === this.size) {
@@ -11,7 +13,7 @@ export class Stack {
         }
         this.inputs.push(pos);
     }
-    pop() {
+    peek() {
         return this.inputs[this.inputs.length - 1];
     }
 }

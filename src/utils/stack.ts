@@ -1,11 +1,13 @@
-import { Pos } from "./types";
+import { Pos } from "./types.js";
 
 export class Stack {
   size: number;
   inputs: Pos[];
-  constructor(size: number, ...inputs: Pos[]) {
+  constructor(size: number, inputs?: Pos[]) {
     this.size = size;
-    this.inputs = [...inputs];
+    this.inputs = inputs
+      ? [...inputs]
+      : [{ x: innerWidth / 2, y: innerHeight / 2 }];
   }
 
   push(pos: Pos) {
@@ -15,7 +17,7 @@ export class Stack {
     this.inputs.push(pos);
   }
 
-  pop() {
+  peek() {
     return this.inputs[this.inputs.length - 1];
   }
 }

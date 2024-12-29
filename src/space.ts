@@ -26,8 +26,10 @@ export class Space {
     this.width = width;
     this.height = height;
 
-    this.rocket = new Rocket();
-    this.minPos = { x: -this.width, y: -this.height };
+    this.minPos = {
+      x: -this.width + innerWidth,
+      y: -this.height + innerHeight,
+    };
     this.maxPos = {
       x: 0,
       y: 0,
@@ -35,6 +37,7 @@ export class Space {
     this.pos = { x: -this.width / 2, y: -this.height / 2 };
     this.#addEventListeners();
     this.#generateGrid();
+    this.rocket = new Rocket(ctx);
     this.bodies = [
       new Body(
         { x: innerWidth / 4, y: innerHeight / 2 },
@@ -61,7 +64,7 @@ export class Space {
   #generateGrid() {
     this.#clearRect();
     this.ctx.beginPath();
-    this.ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+    this.ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
     for (let x = this.pos.x; x < this.width; x += 100) {
       if (x < 0 || x > innerWidth) continue;
       this.ctx.moveTo(x, 0);
@@ -73,6 +76,11 @@ export class Space {
       this.ctx.lineTo(this.width, y);
     }
     this.ctx.stroke();
+    this.ctx.save();
+    this.ctx.strokeStyle = "red";
+    this.ctx.lineWidth = 4;
+    this.ctx.strokeRect(this.pos.x, this.pos.y, this.width, this.height);
+    this.ctx.restore();
   }
 
   #addEventListeners() {
@@ -119,7 +127,6 @@ export class Space {
     this.movement.x = Math.cos(this.angle) * this.thrust;
     this.movement.y = Math.sin(this.angle) * this.thrust;
     if (!this.canRocketMove()) {
-      console.log("can't move");
       return;
     }
     this.pos.x = Math.min(
@@ -130,9 +137,9 @@ export class Space {
       Math.max(this.pos.y - this.movement.y, this.minPos.y),
       this.maxPos.y
     );
-    this.rocket.update(this.angle);
     this.#generateGrid();
     this.bodies.forEach((body) => body.update(this.pos));
+    this.rocket.update(this.angle, this.movement);
   }
   canRocketMove(): boolean {
     return this.bodies.every((body) => body.canEscape(this.movement));
