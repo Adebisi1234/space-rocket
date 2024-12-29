@@ -7,6 +7,8 @@ export class Body {
   spacePos: Pos;
   ctx: CanvasRenderingContext2D;
   id: number;
+  dist: number;
+  gravity: number = 0;
   constructor(
     pos: Pos,
     radius: number,
@@ -20,6 +22,7 @@ export class Body {
     this.id = id;
     this.spacePos = spacePos;
     this.#generateBody();
+    this.dist = 0;
   }
 
   #generateBody() {
@@ -31,25 +34,37 @@ export class Body {
     this.ctx.stroke();
   }
 
-  update(updatedSpacePos: Pos, gravity: Space["gravity"][0]) {
+  update(updatedSpacePos: Pos) {
     this.pos.x -= this.spacePos.x - updatedSpacePos.x;
     this.pos.y -= this.spacePos.y - updatedSpacePos.y;
     this.spacePos = { ...updatedSpacePos };
-    if (rocketIsInBody(this.pos, this.radius)) {
-      gravity.value = 20;
+    if (this.rocketIsInBody(this.pos, this.radius)) {
+      this.gravity = 20;
     } else {
-      gravity.value = 0;
+      this.gravity = 0;
     }
     this.#generateBody();
   }
-}
+  rocketIsInBody(pos: Pos, radius: number) {
+    // Rocket position is always at the middle
+    const dist = Math.hypot(pos.x - innerWidth / 2, pos.y - innerHeight / 2);
+    if (dist <= radius + 8) {
+      //So it can be just outside the body
+      this.dist = dist;
+      return true;
+    }
+    return false;
+  }
 
-function rocketIsInBody(pos: Pos, radius: number) {
-  // Rocket position is always at the middle
-  const dist = Math.hypot(pos.x - innerWidth / 2, pos.y - innerHeight / 2);
-  if (dist <= radius + 8) {
-    //So it can be just outside the body
+  canEscape(movement: Pos) {
+    const pos = {
+      x: this.pos.x - movement.x,
+      y: this.pos.y - movement.y,
+    };
+    const dist = Math.hypot(pos.x - innerWidth / 2, pos.y - innerHeight / 2);
+    if (this.dist && this.dist > dist) {
+      return false;
+    }
     return true;
   }
-  return false;
 }

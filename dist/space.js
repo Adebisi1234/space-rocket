@@ -16,8 +16,8 @@ export class Space {
     movement = { x: 0, y: 0 }; //Account for canvas translation
     angle = 0;
     rocket;
+    cursorMoving = false;
     bodies = [];
-    gravity;
     constructor(ctx, width, height) {
         this.ctx = ctx;
         this.width = width;
@@ -38,7 +38,6 @@ export class Space {
             new Body({ x: 0, y: innerHeight / 5 }, 50, this.ctx, { ...this.pos }, 1),
             new Body({ x: innerWidth * 1.1, y: innerHeight / 8 }, 50, this.ctx, { ...this.pos }, 2),
         ];
-        this.gravity = this.bodies.map((body) => ({ value: 0, bodyId: body.id }));
     }
     #clearRect() {
         this.ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -69,25 +68,41 @@ export class Space {
         document.addEventListener("pointerup", (e) => {
             // Decrease the thrust when the pointer is up
             this.isDragging = false;
+            // Use to keep moving the rocket in the right direction
+            this.cursorMoving = false;
         });
         document.addEventListener("pointermove", (e) => {
             if (!this.isDragging)
                 return;
+            if (!this.cursorMoving) {
+                this.cursorMoving = true;
+            }
             this.angle = calcAngleRad({ x: e.movementX, y: e.movementY });
-            this.thrust = Math.min(this.maxSpeed, Math.max(this.thrust + (3 - this.thrust * getMaxGravity(this.gravity)), 0));
+            this.thrust = Math.min(this.maxSpeed, Math.max(this.thrust + (3 - this.thrust * getMaxGravity(this.bodies)), 0));
         });
     }
     update() {
         if (!this.isDragging) {
-            this.thrust = Math.max(0, this.thrust - this.friction - this.thrust * getMaxGravity(this.gravity));
+            this.thrust = Math.max(0, this.thrust - this.friction - this.thrust * getMaxGravity(this.bodies));
         }
+        // if (!canRocketMove(this.bodies)) {
+        //   console.log(this.thrust);
+        //   this.thrust = ;
+        // }
         this.movement.x = Math.cos(this.angle) * this.thrust;
         this.movement.y = Math.sin(this.angle) * this.thrust;
+        if (!this.canRocketMove()) {
+            console.log("can't move");
+            return;
+        }
         this.pos.x = Math.min(Math.max(this.pos.x - this.movement.x, this.minPos.x), this.maxPos.x);
         this.pos.y = Math.min(Math.max(this.pos.y - this.movement.y, this.minPos.y), this.maxPos.y);
         this.rocket.update(this.angle);
         this.#generateGrid();
-        this.bodies.forEach((body) => body.update(this.pos, this.gravity[body.id]));
+        this.bodies.forEach((body) => body.update(this.pos));
+    }
+    canRocketMove() {
+        return this.bodies.every((body) => body.canEscape(this.movement));
     }
 }
 // function calcAngleDegrees(pos: Pos) {
@@ -96,12 +111,12 @@ export class Space {
 function calcAngleRad(pos) {
     return Math.atan2(pos.y, pos.x);
 }
-function getMaxGravity(gravity) {
-    return gravity.reduce((prev, curr) => {
-        if (curr.value > prev.value)
+function getMaxGravity(bodies) {
+    return bodies.reduce((prev, curr) => {
+        if (curr.gravity > prev.gravity)
             return curr;
         return prev;
-    }, { bodyId: 0, value: 0 })["value"];
+    }, { gravity: 0 })["gravity"];
 }
 // Next
 /*
