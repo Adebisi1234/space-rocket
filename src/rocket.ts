@@ -11,13 +11,6 @@ export class Rocket {
     this.ctx = ctx;
   }
   update(angle: number, movement: Pos) {
-    // this.ctx.beginPath();
-    // this.ctx.lineDashOffset = 10;
-    // this.ctx.fillStyle = "green";
-    // this.ctx.fillRect(innerWidth / 2, innerHeight / 2, 10, 10);
-    // this.ctx.stroke();
-    // this.ctx.closePath();
-
     const newTrail = {
       x: innerWidth / 2,
       y: innerHeight / 2,
