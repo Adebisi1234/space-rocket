@@ -23,7 +23,6 @@ export class Rocket {
       y: innerHeight / 2,
     };
     this.trail.push(newTrail);
-    // console.log(this.trail);
     this.ctx.beginPath();
     this.ctx.lineWidth = 2;
     this.ctx.setLineDash([16, 32]);

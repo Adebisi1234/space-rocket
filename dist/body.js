@@ -6,6 +6,7 @@ export class Body {
     id;
     dist;
     gravity = 0;
+    discovered = false;
     constructor(pos, radius, ctx, spacePos, id) {
         this.radius = radius;
         this.pos = pos;
@@ -52,6 +53,7 @@ export class Body {
         };
         const dist = Math.hypot(pos.x - innerWidth / 2, pos.y - innerHeight / 2);
         if (this.dist && this.dist > dist) {
+            this.discovered = true;
             return false;
         }
         return true;

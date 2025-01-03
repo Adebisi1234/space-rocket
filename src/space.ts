@@ -101,11 +101,6 @@ export class Space {
       );
     }
 
-    // if (!canRocketMove(this.bodies)) {
-    //   console.log(this.thrust);
-    //   this.thrust = ;
-    // }
-
     this.movement.x = Math.cos(this.angle) * this.thrust;
     this.movement.y = Math.sin(this.angle) * this.thrust;
     if (!this.canRocketMove()) {
@@ -122,9 +117,24 @@ export class Space {
     this.#generateGrid();
     this.bodies.forEach((body) => body.update(this.pos));
     this.rocket.update(this.angle, this.movement);
+    this.writeNoOfBodiesDiscovered();
   }
   canRocketMove(): boolean {
     return this.bodies.every((body) => body.canEscape(this.movement));
+  }
+  noOfBodiesDiscovered(): number {
+    return this.bodies.filter((body) => body.discovered).length;
+  }
+  writeNoOfBodiesDiscovered() {
+    this.ctx.font = "30px Arial";
+    this.ctx.fillStyle = "white";
+    this.ctx.fillText(
+      `Bodies Discovered: ${this.noOfBodiesDiscovered()} / ${
+        this.bodies.length
+      }`,
+      10,
+      50
+    );
   }
 }
 
@@ -208,7 +218,6 @@ function generateBody(
     bodies[i].y = Math.random() * y + (y - height / 8);
     i++;
   }
-  console.log(bodies);
   return bodies.map((body) => {
     return new Body(
       {
