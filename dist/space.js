@@ -34,13 +34,7 @@ export class Space {
         this.#addEventListeners();
         this.#generateGrid();
         this.rocket = new Rocket(ctx);
-        this.bodies = [
-            new Body({ x: innerWidth / 4, y: innerHeight / 2 }, 100, this.ctx, {
-                ...this.pos,
-            }, 0),
-            new Body({ x: 0, y: innerHeight / 5 }, 50, this.ctx, { ...this.pos }, 1),
-            new Body({ x: innerWidth * 1.1, y: innerHeight / 8 }, 50, this.ctx, { ...this.pos }, 2),
-        ];
+        this.bodies = generateBody(ctx, this.pos, width, height, 10);
     }
     #clearRect() {
         this.ctx.clearRect(0, 0, innerWidth, innerHeight);
@@ -136,3 +130,51 @@ function getMaxGravity(bodies) {
 - Bodies
  - Different class...
 */
+// function generateBlocks(
+//   ctx: CanvasRenderingContext2D,
+//   pos: Pos,
+//   width: number,
+//   height: number,
+//   size: number
+// ) {
+//   const blocks = [];
+//   for (let x = pos.x; x < width; x += width / (size * 2)) {
+//     for (let y = pos.y; y < height; y += height / 8) {
+//       blocks.push({
+//         x,
+//         y,
+//         width: width / size,
+//         height: height / 8,
+//       });
+//     }
+//   }
+//   ctx.beginPath();
+//   ctx.strokeStyle = "rgba(0, 252, 21, 0.3)";
+//   blocks.forEach((block) => {
+//     ctx.strokeRect(block.x, block.y, block.width, block.height);
+//   });
+//   ctx.stroke();
+// }
+function generateBody(ctx, pos, width, height, size) {
+    // n*n grid
+    const bodies = [];
+    // Separate the random number generation
+    const max10 = () => Math.floor(Math.random() * 10);
+    const max100 = () => Math.floor(Math.random() * 100) + 20;
+    let i = 0;
+    for (let x = pos.x; x < width; x += width / 8) {
+        bodies.push({ x: Math.random() * x + (x - width / size), y: 0 });
+    }
+    i = 0;
+    for (let y = pos.y; y < height; y += height / 8) {
+        bodies[i].y = Math.random() * y + (y - height / 8);
+        i++;
+    }
+    console.log(bodies);
+    return bodies.map((body) => {
+        return new Body({
+            x: body.x,
+            y: body.y,
+        }, max100(), ctx, { ...pos }, i);
+    });
+}
